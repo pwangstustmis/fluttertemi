@@ -30,6 +30,9 @@
           <span class="menuitem"><a class="nav-link" href="first_project.html">第一個專案</a></span>
         </li>
         <li class="mx-2">
+          <span class="menuitem"><a class="nav-link" href="temiapi.html">Temi API</a></span>
+        </li>
+        <li class="mx-2">
           <span class="menuitem"><a class="nav-link" href="material_widgets_1.html">專案範本widgets</a></span>
         </li>        
         <li class="mx-2">
@@ -92,7 +95,7 @@
             <li>開啟 VS Code編輯器利用開啟資料夾並選擇剛建立Temi project檔案夾</li>
             <li>開啟Flutter專案設定檔(pubspec.yaml)並在如下圖位置貼上<span class="text-danger">flutter_temi: ^0.0.13</span>，之後選擇儲存，電腦會下載flutter_temi套件，或是點選右上角下載按鍵也可以</li>
             <img src="imgs/introduction/temipackage.png"/>
-            <li>開啟專案中<span class="text-danger">android-app-build.gradle</span>，修改<span class="text-danger">minSdkVersion 22</span></li>
+            <li>開啟專案中<span class="text-danger">android-app-build.gradle</span>，修改，<span class="text-danger">compileSdkVersion 30</span>，<span class="text-danger">minSdkVersion 22</span>，<span class="text-danger">targetSdkVersion 30</span></li>
             <li>開啟專案中<span class="text-danger">android-app-src-main-AndroidManifest.xml</span>，在如下圖位置加入下列設定</span></li>
             <pre><code>
 &lt;meta-data
@@ -101,82 +104,58 @@
             </code></pre>
             <img src="imgs/first_project/setmanifest.png"/>
             <li>在頁面程式一開始匯入flutter_temi模組(<span class="text-danger">import 'package:flutter_temi/flutter_temi.dart';</span></li>
-            <li>開發完畢後，開啟命令提示字元視窗並進入專案目錄中輸入<span class="text-danger">flutter build apk</span>建立專案apk檔</li>
-            <li>請依照<a href="https://github.com/robotemi/sdk/wiki/Installing-and-Uninstalling-temi-Applications" target="_blank">安裝專案/解除安裝專案</a>步驟將開發apk檔安裝或解除安裝於Temi robot</li>
+            <li>開發完畢後，開啟命令提示字元視窗並進入專案目錄中輸入<span class="text-danger">flutter build apk</span>建立專案apk檔，專案apk檔會在專案資料夾<span class="text-danger">build-app-outputs-apk-release</span>中</li>
+            <li>
+              開啟Temi設定進入開發人員設定：取得Temi連接ip後，開啟命令提示字元視窗輸入<span class="text-danger">adb ip:5555</span>，確認連接後，輸入<span class="text-danger">adb install apk檔名.apk</span>，解除安裝請輸入<span class="text-danger">adb uninstall 專案封裝名稱</span>，專案封裝名稱在中<span class="text-danger">android-app-src-main-AndroidManifest.xml</span>中開始<span class="text-danger">package</span>值(如下圖)
+            </li>
+            <img src="imgs/first_project/manifestpackagename.png"/>
           </ol>
         </div>
         <div class="p-3">
-          <h3 class="text-danger">主程式-main.dart</h3>
+          <h3 class="text-danger">第一個專案</h3>
           <p>
-            請利用Android Studio或VS Code建立並開啟第一個專案firstapp，刪除所有註解(//)後完整程式碼如下：
+            開啟命令提示字元視窗並進入專案擺放目錄輸入<span class="text-danger">flutter create --org tw.edu.stust.mis 專案名稱</span>，之後請使用Vs Code開啟專案擺放目錄中專案名稱資料夾，按照上述步驟修改專案後，請用下列程式取代專案目錄<span class="text-danger">lib-main.dart</span>內容
           </p>
           <pre><code>
-//匯入預設material模組
 import 'package:flutter/material.dart';
+import 'package:flutter_temi/flutter_temi.dart';
 
-//主程式
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
-//主程式傳回MaterialApp widget
+
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-  //Widget build方法用於顯示Widget內容
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      //定義APP層級場景
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(),
     );
   }
 }
-//定義StatefulWidget
+
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-  final String title;
-
   @override
-  State&lt;MyHomePage&gt; createState() => _MyHomePageState();
+  _MyHomePageState createState() => _MyHomePageState();
 }
-//定義StatefulWidget State類別
+
 class _MyHomePageState extends State&lt;MyHomePage&gt; {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(''),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: &lt;Widget&gt;[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
+          child: ElevatedButton(
+              onPressed: () async {
+                FlutterTemi.temiSpeak('Hello 我是Temi');
+              },
+              child: Text('Hello 我是Temi'))),
     );
   }
 }
@@ -185,7 +164,7 @@ class _MyHomePageState extends State&lt;MyHomePage&gt; {
             接下來進行程式說明。
             <ul>
               <li>
-                Flutter預設使用Android Material設計，所以利用 <span class="text-danger">import</span> 匯入material套件material.dart，請注意：iOS APP也可以使用Material設計，只是場景與操作會與預設iOS APP不同。
+                Flutter預設使用Android Material設計，所以利用 <span class="text-danger">import</span> 匯入material套件material.dart，請注意：iOS APP也可以使用Material設計，只是場景與操作會與預設iOS APP不同。之後匯入Temi模組<span class="text-danger">import 'package:flutter_temi/flutter_temi.dart';</span>
               </li>
               <li>
                 主程式main執行runApp，runApp<a href="https://api.flutter.dev/flutter/widgets/runApp.html" target="_blank">語法</a>為 <span class="text-danger">runApp(const MyApp)</span>，MyApp為一不具狀態Widget，Flutter頁面均由 Widgets 所組成，Widget 為程式類別(class)，具狀態或不具狀態Widget稍後將進行說明。
@@ -193,96 +172,11 @@ class _MyHomePageState extends State&lt;MyHomePage&gt; {
               <li>
                 MyApp Widget透過Widget build方法傳回MaterialApp widget，而MaterialApp widget的 <span class="text-danger">home</span> 屬性設定MyHomePage widget為預設頁面
               </li>
+              <li>MyHomePage唯一具狀態widget，具狀態/不具狀態widget在接下內容進行說明，_MyHomePageState類別顯示按鈕，按鈕點選執行Temi說話功能，請注意：所有Temi動作均為非同步動作，因此必須藉由<span class="text-danger">async ... await</span>來執行</li>
             </ul>
           </p>
-          <pre><code>
-//匯入預設material模組
-import 'package:flutter/material.dart';
-
-//主程式
-void main() {
-  runApp(const MyApp());
-}
-//主程式傳回MaterialApp widget
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-  //Widget build方法用於顯示Widget內容
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      //定義APP層級場景
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-          </code></pre>
-          <p class="text-danger">
-            <ul>
-              <li>
-                MyHomePage widget為一具狀態widget，宣告具狀態widget一定包含兩個類別，第一個類建立具狀態widget(<span class="text-danger">class MyHomePage extends StatefulWidget</span>)，在這個類別中僅利用createState()來建立狀態類別如_MyHomePageState。第二個類別 <span class="text-danger">_MyHomePageState</span> 為第一個類別 <span class="text-danger">MyHomePage</span> 的狀態類別，當Widget狀態改變時，<span class="text-danger">_MyHomePageState</span>藉由Widget build顯示最新狀態。
-              </li>
-            </ul>
-          </p>
-          <pre><code>
-//定義StatefulWidget
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-  final String title;
-
-  @override
-  State&lt;MyHomePage&gt; createState() => _MyHomePageState();
-}
-//定義StatefulWidget State類別
-class _MyHomePageState extends State&lt;MyHomePage&gt; {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: &lt;Widget&gt;[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
-    );
-  }
-}
-          </code></pre>
-          <p class="text-danger">
-            簡單來說，Flutter介面均由Widgets所組成，這些Widgets會建構成一Widgets樹，樹根為<span class="text-danger">MaterialApp或CupertiniApp</span>，Widget可為具狀態或不具狀態，不具狀態Widget在顯示後即無法改變其顯示內容。第一個專案程式Widgets樹如下：
-          </p>
-          <p><img src="imgs/first_project/firstapp_widgetstree.png"></p>
-          <pre><code>
-Flutter專案傳回MaterialApp widget，因此頁面Widgets樹的樹根為 <span class="text-danger">MaterialApp widget</span>，頁面使用 <span class="text-danger">Scaffold widget</span> 版面，在Scaffold widget包含 AppBar widget,頁面內容 body屬性,FloaringActionButton(浮動按鈕) widget。頁面內容 body屬性包含 Center widget(水平垂直置中)，置中內容使用 Column(欄版面) widget，欄版面包含兩個Text(文字) widgets，因此構成上述Widgets。
-          </code></pre>
         </div>
+
         <div class="p-3">
           <h3 class="text-danger">頁面架構與Widgets tree</h3>
           <p>
